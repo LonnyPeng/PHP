@@ -863,13 +863,6 @@ function getTags($str = "")
  */
 function faceAPI($interfaceName = "", $params = array())
 {
-    /*
-     * url: https://console.faceplusplus.com.cn/dashboard
-     * email: xingchenyekong@163.com
-     * api_key: EkItamo3TvH2s5iFrzVDEDN6FevsbIS7
-     * api_server: N5zDXGvt0GDuKbdLnxhzi2l7Uof-LOYX
-     */
-
     $interfaceArr = array(
         "facepp/v3/detect", 
         "imagepp/beta/detectsceneandobject",
@@ -1162,91 +1155,6 @@ function getCountryFlag($name = "ca")
     $recult = @file_get_contents($url);
 
     return $recult;
-}
-
-/**
- * Get the instagram PAI
- * 
- * @param string $picUrl = ""
- * @return array
- */
-function getInstagram($picUrl = "")
-{
-    if (isset($_COOKIE['access_token'])) {
-        $accessToken = $_COOKIE['access_token'];
-    } else {
-        $usersInfo = array(
-            'ebddev@eyebuydev' => array(
-                'client_id' => "78304140eb41434b9dfe19edfdea8ee5",
-                'redirect_uri' => "https://www.eyebuydirect.com",
-                'client_secret' => "a476a01294cd4f80b0d26a659dd3f9c3",
-                'cookie' => "mid=V4wt_QAEAAEhZ1_N0YbqPEaus9lA; fbm_124024574287414=base_domain=.instagram.com; sessionid=IGSCb72f099d36345a217d4a474734126c53d41210e31882f0cc2f75b753da002685%3AjXUvpyCmkyLdssIogCFXFDNr2Xa4c1Ws%3A%7B%22_token_ver%22%3A2%2C%22_auth_user_id%22%3A3989476732%2C%22_token%22%3A%223989476732%3AKsnNiEau58FJwuAufpIlrUnoRMM5PIok%3Ada72cfe8a0f067bcc229614a37ae8775ea6cfe4423490539641a38c15bd1f015%22%2C%22asns%22%3A%7B%22204.74.223.145%22%3A20248%2C%22time%22%3A1476168870%7D%2C%22_auth_user_backend%22%3A%22accounts.backends.CaseInsensitiveModelBackend%22%2C%22last_refreshed%22%3A1476168879.344688%2C%22_platform%22%3A4%2C%22_auth_user_hash%22%3A%22%22%7D; s_network=; fbsr_124024574287414=7KkkueXSnKfY4aDBmPVL_x5HTj9hNvGfItjtTTDrfXE.eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsImNvZGUiOiJBUUF6eVRWV2gxWFlEeUxVcmp1OS1yRHlLT1ZQSWZYWGRYWjdnQWxhd0c2bHNLLVpKamg0N1Y4X2dsYXZSLWNHSTIwN1UtS0tfWkYxdEFKVU1vZVJ2ZTA1R3Bsd1h5Vnp0cWUtWUlTMXhmLWRoOXVNYzU0clFFV05KUWVjZXlSWWpMUWVtY2dHVTZGRHM0T1FUUzlURVRycmtTWDllNkFyT1liY1RGWXFmY2pjQmlCdWxHeU4wbkM1Y1JoOGdkNXJvel91aEVjWjVyWHdXX1BvS0czVTNCMTFlazRHeEJ3UHlfWGI1NHpZZ0xOM09YVUpoS1NCYTdRSFFMdHBZSTFzYlo5dEdTZVhtUlZodWF6N3JBXzFwVllMRzZTQWZuU25qV1RYeHFmc0g5ZGFRbDl0MS0ybnRVMUVYNldoTGhHSlZVVGFnVHdjcHktZWhKS0ZNSzU1T2Z2RyIsImlzc3VlZF9hdCI6MTQ3NjE2ODg4MywidXNlcl9pZCI6IjEwMDAxMDYxODc0MDU5MCJ9; ig_pr=1; ig_vw=1920; csrftoken=jhiELPGLN5dOvGGw6YF0FNCo7Ve6lEIB; ds_user_id=3989476732",
-            ),
-        );
-        $accessToken = getAccessToken($usersInfo['ebddev@eyebuydev']);
-        setcookie("access_token", $accessToken, time() + 86400, "/");
-    } 
-
-    $instagramUrl = "https://api.instagram.com/oembed/?url=" . $picUrl;
-    $instagramInfo = @file_get_contents($instagramUrl);
-    $instagramInfo = json_decode($instagramInfo, true);
-    $imgInfo = array(
-        'media_id' => $instagramInfo['media_id'],
-        'banner_large_file' => explode("?", $instagramInfo['thumbnail_url'])[0],
-        'banner_alt' => $instagramInfo['title'],
-        'ins_author_name' => $instagramInfo['author_name'],
-    );
-    $keys = array(
-        'likes',
-        'comments',
-    );
-    $mediaId = $imgInfo['media_id'];
-    foreach ($keys as $key) {
-        $url = "https://api.instagram.com/v1/media/{$mediaId}/{$key}?access_token={$accessToken}";
-        $recult = @file_get_contents($url);
-        $recult = json_decode($recult, true);
-        $imgInfo[$key] = count($recult['data']);
-    }
-
-    return $imgInfo;
-}
-
-/**
- * Get instagram access token
- * @param array $userInfo = array()
- */
-function getAccessToken($userInfo = array())
-{
-    /*get code*/
-    $urlInfo = array(
-        'url' => "https://api.instagram.com/oauth/authorize/",
-        'params' => array(
-            'client_id' => $userInfo['client_id'],
-            'redirect_uri' => $userInfo['redirect_uri'],
-            'response_type' => "code",
-        ),
-        'cookie' => $userInfo['cookie'],
-    );
-    $recult = curl($urlInfo, "GET", true);
-    $recultUrl = getUrl($recult['url']);
-    $code = $recultUrl['params']['code'];
-
-    //get access_token
-    $urlInfo = array(
-        'url' => "https://api.instagram.com/oauth/access_token",
-        'params' => array(
-            'client_id' => $userInfo['client_id'],
-            'client_secret' => $userInfo['client_secret'],
-            'grant_type' => "authorization_code",
-            'redirect_uri' => $userInfo['redirect_uri'],
-            'code' => $code,
-        ),
-    );
-    $recult = curl($urlInfo, "POST");
-    $recult = json_decode($recult, true);
-    $accessToken = $recult['access_token'];
-
-    return $accessToken;
 }
 
 /*
