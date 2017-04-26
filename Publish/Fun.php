@@ -517,8 +517,9 @@ function randPassword($length = '') {
  */
 function convert($size = "") { 
     $unit = array(
-        "B", "KB", "MB", 
+        "Bytes", "KB", "MB", 
         "GB", "TB", "PB", 
+        "EB", "ZB", "YB",
     ); 
 
     $i = floor(log($size, 1024));
