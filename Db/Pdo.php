@@ -1,9 +1,4 @@
 <?php
-/**
- * Standard Library
- *
- * @package Ebd_Db
- */
 
 namespace Db;
 
