@@ -1390,3 +1390,46 @@ function dateDiff($start = '', $end = '')
 
     return floor(($start - $end) / 86400);
 }
+
+/**
+ * Check string if is email
+ * 
+ * @param string $email
+ * @return boolean
+ */
+function isEmail($email)
+{
+    if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
+         return true;
+    } else {
+         return false;
+    }
+}
+
+/** 
+ * Check string if is url
+ * @param string  $url
+ * @return boolean
+ */  
+function isUrl($url)
+{  
+    if(filter_var($url,FILTER_VALIDATE_URL)) {  
+        return true;  
+    } else {  
+        return false;  
+    }  
+}
+
+/** 
+ * Check string if is IP
+ * @param string  $ip
+ * @return boolean
+ */  
+function isIp($ip)
+{  
+    if(filter_var($url,FILTER_VALIDATE_IP)) {  
+        return true;  
+    } else {  
+        return false;  
+    }  
+} 
