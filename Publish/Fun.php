@@ -590,6 +590,26 @@ function subStrZhWord($string = "")
 }
 
 /**
+ * Intercept string
+ * 
+ * @param string $string
+ * @param int $start
+ * @param int $length
+ * @return string
+ */
+function subStr($string = "", $start = 0, $length = 0)
+{
+    $length = (int) trim($length);
+    $start = (int) trim($start);
+
+    if ($length < 1) {
+        $length = mb_strlen($str, "UTF-8");
+    }
+
+    return mb_substr($str, $start, $length, "UTF-8");
+}
+
+/**
  * Set the URL
  * 
  * @param string $url = ""
