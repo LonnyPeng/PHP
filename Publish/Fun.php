@@ -597,7 +597,7 @@ function subStrZhWord($string = "")
  * @param int $length
  * @return string
  */
-function subStr($string = "", $start = 0, $length = 0)
+function mbSubString($string = "", $start = 0, $length = 0)
 {
     $length = (int) trim($length);
     $start = (int) trim($start);
