@@ -84,7 +84,7 @@ function unicodeEncode($name = "")
             $c = $name[$i];
             $c2 = $name[$i + 1];
             if (ord($c) > 0) {
-                $str .= base_convert(ord($c), 10, 16) . base_convert(ord($c2), 10, 16);  
+                $str .= str_pad(base_convert(ord($c), 10, 16), 2, 0, STR_PAD_LEFT) . str_pad(base_convert(ord($c2), 10, 16), 2, 0, STR_PAD_LEFT);
             } else {  
                 $str .= $c2;  
             }  
