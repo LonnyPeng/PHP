@@ -1231,7 +1231,7 @@ function tk($a = "", $TKK = "") {
  * @param array $tranInfo = array('tl' => 'zh-CN', 'text' => "Hello World")
  * @return string
  */
-function translateGoogleApi($tranInfo = array('tl' => 'en', 'text' => 'Hello World'), $status = false)
+function translateGoogleApi($tranInfo = array('tl' => 'en', 'text' => ['Hello World']), $status = false)
 {
     $langArr = array(
         "sq", "ar", "am", "az", "ga", "et", "eu", "be", "bg", "is", "pl", "bs", "fa", "af", "da", "de", "ru", "fr", "tl", "fi", 
@@ -1249,35 +1249,62 @@ function translateGoogleApi($tranInfo = array('tl' => 'en', 'text' => 'Hello Wor
         return false;
     }
 
-    $tkk = TKK();   
-    $tk = tk($tranInfo['text'], $tkk);
+    $text = (array) $tranInfo['text'];
+    $tkk = TKK();
+    $urlInfo = [];
+    foreach ($text as $key => $value) {
+        $tk = tk($value, $tkk);
 
-    $urlInfo = array(
-        'url' => "https://translate.google.cn/translate_a/single",
-        'params' => array(
-            'client' => "t",
-            'sl' => "auto",
-            'tl' => $tranInfo['tl'],
-            'dt' => array(
-                "at", "bd", "ex", "ld", "md",
-                "qca", "rw", "rm", "ss", "t",
+        $urlInfo[$key] = array(
+            'url' => "https://translate.google.cn/translate_a/single",
+            'params' => array(
+                'client' => "t",
+                'sl' => "auto",
+                'tl' => $tranInfo['tl'],
+                'dt' => array(
+                    "at", "bd", "ex", "ld", "md",
+                    "qca", "rw", "rm", "ss", "t",
+                ),
+                'tk' => $tk,
+                'q' => urlencode($value),
             ),
-            'tk' => $tk,
-            'q' => urlencode($tranInfo['text']),
-        ),
-    );
-    $html = curl($urlInfo);
-    $data = json_decode($html);
+        );
+    }
+
+    if (count($text) == 1) {
+        $html = curl(reset($urlInfo));
+        $data = json_decode($html);
+    } else {
+        $html = curlMulti($urlInfo);
+        $data = array_map("json_decode", $html);
+    }
 
     if ($status) {
         return $data;
     } else {
-        $str = "";
-        foreach ($data[0] as $row) {
-            $str .= $row[0];
+        if (count($text) == 1) {
+            $str = "";
+            if (isset($data[0])) {
+                foreach ($data[0] as $row) {
+                    $str .= $row[0];
+                }
+            }
+            
+            return $str;
+        } else {
+            foreach ($data as $key => $row) {
+                $str = "";
+                if (isset($row[0])) {
+                    foreach ($row[0] as $r) {
+                        $str .= $r[0];
+                    }
+                }
+
+                $data[$key] = $str;
+            }
+
+            return $data;
         }
-        
-        return $str;
     }
 }
 
