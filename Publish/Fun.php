@@ -268,7 +268,7 @@ function csvHeader($filename = "")
 function setText($str = "")
 {
     $str = trim($str);
-    $str = sprintf("\"%s\"", $str);
+    $str = sprintf("%s", $str);
     $str = iconv("UTF-8", "GBK//IGNORE", $str);
     $str .= "\t";
 
