@@ -1480,3 +1480,33 @@ function isIp($ip)
         return false;  
     }  
 } 
+
+/**
+ * Show time
+ * @param int $time
+ * @return string
+ */
+function showTime($time) {
+    $time = (int) trim($time);
+    $init = [
+        'year' => [31536000, '年'],
+        'month' => [2592000, '月'],
+        'day' => [86400, '日'],
+        'hour' => [3600, '时'],
+        'minute' => [60, '分'],
+        'second' => [1, '秒'],
+    ];
+
+    $str = '';
+    foreach ($init as $key => $row) {
+        $num = floor($time / $row[0]);
+        if (!$num) {
+            continue;
+        }
+        
+        $str .= $num . $row[1];
+        $time -= $num * $row[0];
+    }
+
+    return $str;
+}
